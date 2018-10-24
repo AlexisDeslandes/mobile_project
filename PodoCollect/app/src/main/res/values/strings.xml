@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">PodoCollect</string>
+    <string name="steps">Steps :</string>
+    <string name="add">Ajouter article</string>
+    <string name="start">Démarrer</string>
+    <string name="example">Exemple</string>
+    <string name="delete">Effacer</string>
+    <string name="next">Suivant</string>
+    <string name="cancel">Annuler</string>
 </resources>
