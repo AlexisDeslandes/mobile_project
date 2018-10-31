@@ -7,4 +7,8 @@
     <string name="delete">Effacer</string>
     <string name="next">Suivant</string>
     <string name="cancel">Annuler</string>
+    <string name="article">Article</string>
+    <string name="end">Terminer</string>
+    <string name="collect_ended">COLLECTE TERMINÉE !</string>
+    <string name="send">Envoyer</string>
 </resources>

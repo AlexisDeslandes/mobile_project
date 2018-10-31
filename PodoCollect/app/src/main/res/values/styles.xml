@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -6,9 +6,20 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textViewStyle">@style/DroidTextViewStyle</item>
+        <item name="android:buttonStyle">@style/DroidButtonStyle</item>
     </style>
 
-    <style name="generalnotitle" parent="AppTheme">
+    <style name="DroidTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/droid_sans</item>
+    </style>
+
+    <style name="DroidButtonStyle" parent="android:Widget.Material.Button">
+        <item name="android:fontFamily">@font/droid_sans</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat</item>
+    </style>
+
+    <style name="generalnotitle">
         <item name="android:windowNoTitle">true</item>
     </style>
 

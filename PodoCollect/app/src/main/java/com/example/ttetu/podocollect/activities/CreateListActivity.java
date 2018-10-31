@@ -1,12 +1,10 @@
-package com.example.ttetu.podocollect;
+package com.example.ttetu.podocollect.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,7 +17,12 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.ttetu.podocollect.R;
+
 import java.util.ArrayList;
+import java.util.Collections;
+
+import static android.content.Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP;
 
 public class CreateListActivity extends AppCompatActivity {
 
@@ -39,20 +42,24 @@ public class CreateListActivity extends AppCompatActivity {
         startButton = findViewById(R.id.startButton);
 
         this.articleList = new ArrayList<>();
-        mAdapter = new ArrayAdapter<>(this, R.layout.row, R.id.article_title, this.articleList);
+        mAdapter = new ArrayAdapter<>(this, R.layout.row_article, R.id.article_title, this.articleList);
         articleListView.setAdapter(mAdapter);
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Collections.shuffle(articleList);
                 openStartActivity();
             }
         });
 
     }
 
+
     public void openStartActivity() {
         Intent i = new Intent(this, MainActivity.class);
+        i.putExtra("articleList",articleList);
+        i.setFlags(FLAG_ACTIVITY_PREVIOUS_IS_TOP);
         startActivity(i);
     }
 
@@ -69,6 +76,9 @@ public class CreateListActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 String article = String.valueOf(articleEditText.getText());
                                 articleList.add(article);
+                                if(articleList.size() > 1){
+                                    enableStartButton();
+                                }
                                 mAdapter.notifyDataSetChanged();
                             }
                         })
@@ -99,7 +109,18 @@ public class CreateListActivity extends AppCompatActivity {
         Log.e("String", (String) articleTextView.getText());
         String article = String.valueOf(articleTextView.getText());
         articleList.remove(article);
+        if(articleList.size() <= 1){
+            disableStartButton();
+        }
         mAdapter.notifyDataSetChanged();
 
+    }
+
+    private void disableStartButton(){
+        startButton.setEnabled(false);
+    }
+
+    private void enableStartButton(){
+        startButton.setEnabled(true);
     }
 }
