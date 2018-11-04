@@ -11,13 +11,24 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
 import com.example.ttetu.podocollect.R;
+import com.example.ttetu.podocollect.adapters.ArticleListAdapter;
+import com.example.ttetu.podocollect.adapters.AutoCompleteListAdapter;
+import com.example.ttetu.podocollect.models.Article;
+import com.example.ttetu.podocollect.util.Requester;
+import com.example.ttetu.podocollect.util.ServerCallBack;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,10 +37,12 @@ import static android.content.Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP;
 
 public class CreateListActivity extends AppCompatActivity {
 
-    ArrayAdapter<String> mAdapter;
+    ArticleListAdapter mAdapter;
     ListView articleListView;
-    ArrayList<String> articleList;
+    ArrayList<Article> articleList;
     Button startButton;
+    Requester r;
+    ArrayList<Article> articles;
 
 
     @Override
@@ -40,9 +53,10 @@ public class CreateListActivity extends AppCompatActivity {
 
         articleListView = findViewById(R.id.article_list);
         startButton = findViewById(R.id.startButton);
-
+        this.articles = new ArrayList<>();
         this.articleList = new ArrayList<>();
-        mAdapter = new ArrayAdapter<>(this, R.layout.row_article, R.id.article_title, this.articleList);
+
+        mAdapter = new ArticleListAdapter(this,articleList);
         articleListView.setAdapter(mAdapter);
 
         startButton.setOnClickListener(new View.OnClickListener() {
@@ -53,8 +67,28 @@ public class CreateListActivity extends AppCompatActivity {
             }
         });
 
-    }
+        r = new Requester(this);
+        r.getRequest("http://renaudcosta.pythonanywhere.com/articles", new ServerCallBack() {
+             @Override
+             public void onSuccess(JSONArray result) {
+                 Log.i("I", "onSuccess: " + result.toString());
+                 for (int i = 0; i < result.length();i++){
+                     try {
+                         JSONObject o = result.getJSONObject(i);
+                         Article a = new Article(o.getInt("id"),o.getString("nom"));
+                         articles.add(a);
+                     } catch (JSONException e) {
+                         e.printStackTrace();
+                     }
+                 }
+             }
 
+             @Override
+             public void onError(VolleyError error) {
+
+             }
+         });
+    }
 
     public void openStartActivity() {
         Intent i = new Intent(this, MainActivity.class);
@@ -65,24 +99,35 @@ public class CreateListActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_add_article:
-                final EditText articleEditText = new EditText(this);
-                AlertDialog dialog = new AlertDialog.Builder(this)
+                final Article[] a = new Article[1];
+                AutoCompleteListAdapter adapter = new AutoCompleteListAdapter(this, R.layout.auto_complete_row, articles);
+                final AutoCompleteTextView articleEditText = new AutoCompleteTextView(this);
+                articleEditText.setAdapter(adapter);
+                articleEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        a[0] = (Article) adapterView.getItemAtPosition(i);
+                        articleEditText.setText(a[0].getName());
+                    }
+                });
+                final AlertDialog dialog = new AlertDialog.Builder(this)
                         .setTitle("Ajouter un article")
                         .setView(articleEditText)
                         .setPositiveButton("Ajouter", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                String article = String.valueOf(articleEditText.getText());
-                                articleList.add(article);
-                                if(articleList.size() > 1){
-                                    enableStartButton();
+                                if(articles.contains(a[0])){
+                                    articleList.add(a[0]);
+                                    if (articleList.size() > 1) {
+                                        enableStartButton();
+                                    }
+                                    mAdapter.notifyDataSetChanged();
                                 }
-                                mAdapter.notifyDataSetChanged();
                             }
                         })
-                        .setNegativeButton("Annuler",null)
+                        .setNegativeButton("Annuler", null)
                         .create();
                 dialog.show();
                 return true;

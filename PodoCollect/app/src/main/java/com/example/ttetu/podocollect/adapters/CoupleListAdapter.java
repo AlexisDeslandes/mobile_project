@@ -16,11 +16,8 @@ import java.util.List;
 
 public class CoupleListAdapter extends ArrayAdapter<ArticleCouple> {
 
-    private Context mContext;
-
     public CoupleListAdapter(Context context, List<ArticleCouple> couples) {
         super(context,0,couples);
-        this.mContext = context;
     }
 
     @SuppressLint("SetTextI18n")
@@ -30,7 +27,6 @@ public class CoupleListAdapter extends ArrayAdapter<ArticleCouple> {
         View v = convertView;
 
         if (v == null) {
-            LayoutInflater vi;
             v = LayoutInflater.from(getContext()).inflate(R.layout.row_collect,parent,false);
         }
 
@@ -43,7 +39,7 @@ public class CoupleListAdapter extends ArrayAdapter<ArticleCouple> {
             if (articles != null){
                 articles.setText(c.getStart() + " → " + c.getEnd());
             }
-
+            
             if (steps != null){
                 steps.setText(String.valueOf(c.getSteps()));
             }

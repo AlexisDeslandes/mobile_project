@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ttetu.podocollect.R;
+import com.example.ttetu.podocollect.models.Article;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,8 +43,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     boolean running = false;
     private int initValue = 0;
     int articleIndex = 0;
-    ArrayList<String> articleList;
+    ArrayList<Article> articleList;
     JSONArray stepJsonArray;
+    JSONArray stringJsonArray;
 
     @Override
     public void onBackPressed() {
@@ -56,32 +58,39 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_main);
 
         stepJsonArray = new JSONArray();
+        stringJsonArray = new JSONArray();
 
-        articleList = (ArrayList<String>) getIntent().getSerializableExtra("articleList");
+        articleList = (ArrayList<Article>) getIntent().getSerializableExtra("articleList");
 
         tv_steps = findViewById(R.id.tv_steps);
         article_text = findViewById(R.id.article_text);
 
         nextButton = findViewById(R.id.next_button);
 
-        article_text.setText(articleList.get(articleIndex));
+        article_text.setText(articleList.get(articleIndex).getName());
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                    JSONObject articlesString = new JSONObject();
                     JSONObject articlesSteps = new JSONObject();
                     try {
                         if (articleIndex - 1 >= 0) {
                             //Do Nothing
-                            articlesSteps.put("Start", articleList.get(articleIndex - 1));
-                            articlesSteps.put("End", articleList.get(articleIndex));
-                            articlesSteps.put("nbSteps", stepCounter);
+                            articlesSteps.put("startId", articleList.get(articleIndex - 1).getId());
+                            articlesSteps.put("endId", articleList.get(articleIndex).getId());
+                            articlesSteps.put("distance", stepCounter);
+                            stepJsonArray.put(articlesSteps);
+                            articlesString.put("startId", articleList.get(articleIndex - 1).getName());
+                            articlesString.put("endId", articleList.get(articleIndex).getName());
+                            articlesString.put("distance", stepCounter);
+                            stringJsonArray.put(articlesString);
                         }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    stepJsonArray.put(articlesSteps);
+
                     Log.i("I", "JSON: " + stepJsonArray.toString());
 
                     stepCounter = 0;
@@ -102,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         return;
                     }
                     if (articleIndex < articleList.size())
-                    article_text.setText(articleList.get(articleIndex));
+                    article_text.setText(articleList.get(articleIndex).getName());
 
                 }
         });
@@ -192,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void goToEndedCollectActivity(JSONArray stepJsonArray){
         Intent i = new Intent(this, EndedCollectActivity.class);
         i.putExtra("stepJsonArray", this.stepJsonArray.toString());
+        i.putExtra("stringJsonArray", this.stringJsonArray.toString());
         startActivity(i);
     }
 
