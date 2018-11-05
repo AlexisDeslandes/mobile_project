@@ -118,7 +118,7 @@ public class CreateListActivity extends AppCompatActivity {
                         .setPositiveButton("Ajouter", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if(articles.contains(a[0])){
+                                if(articles.contains(a[0]) && !articleList.contains(a[0])){
                                     articleList.add(a[0]);
                                     if (articleList.size() > 1) {
                                         enableStartButton();
@@ -153,7 +153,11 @@ public class CreateListActivity extends AppCompatActivity {
         TextView articleTextView = parent.findViewById(R.id.article_title);
         Log.e("String", (String) articleTextView.getText());
         String article = String.valueOf(articleTextView.getText());
-        articleList.remove(article);
+        for(Article a : articleList){
+            if (a.getName().equals(article)){
+                articleList.remove(a);
+            }
+        }
         if(articleList.size() <= 1){
             disableStartButton();
         }
