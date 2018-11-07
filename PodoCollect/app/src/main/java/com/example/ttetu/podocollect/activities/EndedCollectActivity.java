@@ -87,15 +87,17 @@ public class EndedCollectActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onError(VolleyError error) {
-                                        Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
-                                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        startActivity(i);
-                                        finish();
+                                        restartApp();
                                     }
                                 });
                             }
                         })
-                        .setNegativeButton("Non", null)
+                        .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                restartApp();
+                            }
+                        })
                         .create();
                 dialog.show();
                 return true;
@@ -114,5 +116,12 @@ public class EndedCollectActivity extends AppCompatActivity {
         icon.setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_IN);
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    void restartApp(){
+        Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+        finish();
     }
 }
