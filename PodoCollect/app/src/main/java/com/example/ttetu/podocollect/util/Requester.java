@@ -9,7 +9,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
@@ -23,7 +22,7 @@ public class Requester {
         queue = Volley.newRequestQueue(context);
     }
 
-    public void getRequest(String url, final ServerCallBack callBack){
+    public void getRequest(String url, final GetCallBack callBack){
         // Request a string response from the provided URL.
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -43,11 +42,12 @@ public class Requester {
         queue.start();
     }
 
-    public void postRequest(String url, JSONArray jsonArray, final ServerCallBack callBack){
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.POST, url, jsonArray, new Response.Listener<JSONArray>() {
+    public void postRequest(String url, JSONObject jsonObject, final PostCallBack callBack){
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONArray response) {
-                Log.d("D", "onResponse: SUCCESS");
+            public void onResponse(JSONObject response) {
+                Log.d("D", "onSuccess" + response.toString());
+                callBack.onSuccess(response);
             }
         }, new Response.ErrorListener() {
 
@@ -58,7 +58,7 @@ public class Requester {
             }
         });
 // Add the request to the RequestQueue.
-        queue.add(jsonArrayRequest);
+        queue.add(jsonObjectRequest);
         queue.start();
     }
 }

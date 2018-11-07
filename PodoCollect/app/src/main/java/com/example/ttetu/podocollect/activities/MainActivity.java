@@ -200,7 +200,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void goToEndedCollectActivity(JSONArray stepJsonArray){
         Intent i = new Intent(this, EndedCollectActivity.class);
-        i.putExtra("stepJsonArray", this.stepJsonArray.toString());
+        JSONObject distancesJson = new JSONObject();
+        try {
+            distancesJson.put("token","wakandaforeva");
+            distancesJson.put("distances", this.stepJsonArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        i.putExtra("distancesJson", distancesJson.toString());
         i.putExtra("stringJsonArray", this.stringJsonArray.toString());
         startActivity(i);
     }

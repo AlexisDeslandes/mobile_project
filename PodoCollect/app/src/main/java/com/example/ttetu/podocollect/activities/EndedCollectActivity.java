@@ -1,6 +1,7 @@
 package com.example.ttetu.podocollect.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -12,13 +13,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.ttetu.podocollect.R;
 import com.example.ttetu.podocollect.adapters.CoupleListAdapter;
 import com.example.ttetu.podocollect.models.ArticleCouple;
+import com.example.ttetu.podocollect.util.PostCallBack;
 import com.example.ttetu.podocollect.util.Requester;
-import com.example.ttetu.podocollect.util.ServerCallBack;
+import com.example.ttetu.podocollect.util.GetCallBack;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,7 +32,7 @@ import java.util.ArrayList;
 @SuppressLint("Registered")
 public class EndedCollectActivity extends AppCompatActivity {
 
-    JSONArray stepJsonArray;
+    JSONObject distancesJson;
     JSONArray stringJsonArray;
     CoupleListAdapter mAdapter;
     ArrayList<ArticleCouple> couples;
@@ -47,9 +50,9 @@ public class EndedCollectActivity extends AppCompatActivity {
         this.setContentView(R.layout.activity_ended_collect);
         couplesView = findViewById(R.id.collect_list);
         try {
-            stepJsonArray = new JSONArray((String) getIntent().getSerializableExtra("stepJsonArray"));
+            distancesJson = new JSONObject((String) getIntent().getSerializableExtra("distancesJson"));
             stringJsonArray = new JSONArray((String) getIntent().getSerializableExtra("stringJsonArray"));
-            Log.i("i", "JSONARRAY: " + stepJsonArray.toString());
+            Log.i("i", "JSONARRAY: " + distancesJson.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -79,15 +82,23 @@ public class EndedCollectActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //Do Something (Send + Go Back to menu)
-                                r.postRequest("https://renaudcosta.pythonanywhere.com/distances", stepJsonArray, new ServerCallBack() {
-                                    @Override
-                                    public void onSuccess(JSONArray result) {
+                                r.postRequest("https://renaudcosta.pythonanywhere.com/distances", distancesJson, new PostCallBack() {
 
+                                    @Override
+                                    public void onSuccess(JSONObject jsonObject) {
+                                        Log.d("D", "Status200");
+                                        restartApp();
                                     }
 
                                     @Override
                                     public void onError(VolleyError error) {
-                                        restartApp();
+                                        Log.d("D", "ERROR No Internet Connexion");
+                                        Context context = getApplicationContext();
+                                        CharSequence text = "No Internet Connexion !!!";
+                                        int duration = Toast.LENGTH_SHORT;
+
+                                        Toast toast = Toast.makeText(context, text, duration);
+                                        toast.show();
                                     }
                                 });
                             }

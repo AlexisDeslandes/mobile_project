@@ -1,5 +1,6 @@
 package com.example.ttetu.podocollect.activities;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -12,11 +13,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.example.ttetu.podocollect.R;
@@ -24,7 +25,7 @@ import com.example.ttetu.podocollect.adapters.ArticleListAdapter;
 import com.example.ttetu.podocollect.adapters.AutoCompleteListAdapter;
 import com.example.ttetu.podocollect.models.Article;
 import com.example.ttetu.podocollect.util.Requester;
-import com.example.ttetu.podocollect.util.ServerCallBack;
+import com.example.ttetu.podocollect.util.GetCallBack;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,7 +69,7 @@ public class CreateListActivity extends AppCompatActivity {
         });
 
         r = new Requester(this);
-        r.getRequest("http://renaudcosta.pythonanywhere.com/articles", new ServerCallBack() {
+        r.getRequest("http://renaudcosta.pythonanywhere.com/articles", new GetCallBack() {
              @Override
              public void onSuccess(JSONArray result) {
                  Log.i("I", "onSuccess: " + result.toString());
@@ -85,7 +86,12 @@ public class CreateListActivity extends AppCompatActivity {
 
              @Override
              public void onError(VolleyError error) {
+                 Context context = getApplicationContext();
+                 CharSequence text = "No Internet Connexion";
+                 int duration = Toast.LENGTH_SHORT;
 
+                 Toast toast = Toast.makeText(context, text, duration);
+                 toast.show();
              }
          });
     }
