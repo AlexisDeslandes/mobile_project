@@ -40,20 +40,23 @@
     </ion-row>
     <ion-row>
       <ion-col col-12>
-        <ion-searchbar
-          color="primary"
-          (ionInput)="search_items($event)"
-          placeholder="Nom article"
-        >
-        </ion-searchbar>
-        <ion-list style="max-height: 30vh;overflow-y:scroll">
-          <ion-item *ngFor="let article of articles_filtered" (click)="add_to_list(article)">
-            <ion-icon color="primary" item-left name="cart"></ion-icon>
-            <ion-label>
-              {{article.nom}}
-            </ion-label>
-          </ion-item>
-        </ion-list>
+
+        <ion-card>
+          <ion-searchbar
+            color="primary"
+            (ionInput)="search_items($event)"
+            placeholder="Nom article"
+          >
+          </ion-searchbar>
+          <ion-list style="max-height: 30vh;overflow-y:scroll">
+            <ion-item  *ngFor="let article of articles_filtered" (click)="add_to_list(article)">
+              <ion-icon color="primary" item-left name="cart"></ion-icon>
+              <ion-label>
+                {{article.nom}}
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-card>
       </ion-col>
     </ion-row>
   </ion-grid>
