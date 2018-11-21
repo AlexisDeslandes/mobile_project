@@ -14,8 +14,8 @@
         <ion-card>
 
           <ion-item color="primary">
+            <ion-icon item-left name="list"></ion-icon>
             <ion-label>
-              <ion-icon name="list"></ion-icon>
               Ma liste
             </ion-label>
             <button item-end ion-button clear color="light" (click)="start_shopping()">Lancer</button>
@@ -24,11 +24,13 @@
 
           <ion-list style="height:30vh;overflow-y: scroll">
             <ion-item *ngFor="let article of my_articles">
+              <ion-icon item-left color="primary" name="cart"></ion-icon>
               <ion-label>
-                <ion-icon name="cart"></ion-icon>
                 {{article.nom}}
               </ion-label>
-              <button (click)="remove_from_list(article)" clear ion-button item-end><ion-icon color="primary" name="trash"></ion-icon></button>
+              <button (click)="remove_from_list(article)" clear ion-button item-end>
+                <ion-icon color="primary" name="trash"></ion-icon>
+              </button>
             </ion-item>
           </ion-list>
 
@@ -46,8 +48,8 @@
         </ion-searchbar>
         <ion-list style="max-height: 30vh;overflow-y:scroll">
           <ion-item *ngFor="let article of articles_filtered" (click)="add_to_list(article)">
+            <ion-icon color="primary" item-left name="cart"></ion-icon>
             <ion-label>
-              <ion-icon name="cart"></ion-icon>
               {{article.nom}}
             </ion-label>
           </ion-item>
