@@ -16,7 +16,7 @@ export class ArticleProvider {
   }
 
   async get(): Promise<Article[]> {
-    return await this.http.get<Article[]>("https://renaudcosta.pythonanywhere.com/articles").toPromise();
+    return await this.http.get<Article[]>("https://renaudcosta.pythonanywhere.com/articles",{}).toPromise();
   }
 
 }

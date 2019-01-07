@@ -10,6 +10,7 @@ import {ArticleProvider} from '../providers/article/article';
 import {HttpClientModule} from "@angular/common/http";
 import {ShoppingProvider} from '../providers/shopping/shopping';
 import {ShoppingPage} from "../pages/shopping/shopping";
+import {Pedometer} from "@ionic-native/pedometer";
 
 
 @NgModule({
@@ -35,7 +36,8 @@ import {ShoppingPage} from "../pages/shopping/shopping";
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     ArticleProvider,
-    ShoppingProvider
+    ShoppingProvider,
+    Pedometer
   ]
 })
 export class AppModule {
