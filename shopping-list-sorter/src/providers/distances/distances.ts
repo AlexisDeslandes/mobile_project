@@ -12,7 +12,6 @@ import {Distance} from "../../interfaces/Distance";
 export class DistancesProvider {
 
   constructor(public http: HttpClient) {
-    //https://renaudcosta.pythonanywhere.com/distances
     console.log('Hello DistancesProvider Provider');
   }
 

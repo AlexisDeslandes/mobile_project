@@ -58,7 +58,6 @@ export class HomePage {
 
   async start_shopping(): Promise<void> {
     const shopping: Shopping = new Shopping(this.my_articles);
-    const elem = await this.shopping_provider.post(shopping);
     const shopping_sorted: Shopping = new Shopping(await this.shopping_provider.post(shopping));
     await this.navCtrl.push(ShoppingPage, {shopping: shopping_sorted});
   }
