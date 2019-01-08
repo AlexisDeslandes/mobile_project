@@ -8,9 +8,10 @@ import {MyApp} from './app.component';
 import {HomePage} from '../pages/home/home';
 import {ArticleProvider} from '../providers/article/article';
 import {HttpClientModule} from "@angular/common/http";
-import {ShoppingProvider} from '../providers/shopping/shopping';
+import {ProcessProvider} from '../providers/shopping/process';
 import {ShoppingPage} from "../pages/shopping/shopping";
 import {Pedometer} from "@ionic-native/pedometer";
+import { DistancesProvider } from '../providers/distances/distances';
 
 
 @NgModule({
@@ -36,8 +37,9 @@ import {Pedometer} from "@ionic-native/pedometer";
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     ArticleProvider,
-    ShoppingProvider,
-    Pedometer
+    ProcessProvider,
+    Pedometer,
+    DistancesProvider
   ]
 })
 export class AppModule {

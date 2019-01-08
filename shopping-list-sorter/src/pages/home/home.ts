@@ -3,7 +3,7 @@ import {NavController} from 'ionic-angular';
 import {Article} from "../../interfaces/Article";
 import {ArticleProvider} from "../../providers/article/article";
 import {Shopping} from "../../interfaces/Shopping";
-import {ShoppingProvider} from "../../providers/shopping/shopping";
+import {ProcessProvider} from "../../providers/shopping/process";
 import {ShoppingPage} from "../shopping/shopping";
 
 
@@ -18,7 +18,7 @@ export class HomePage {
   articles_filtered: Article[];
 
   constructor(public navCtrl: NavController, private article_provider: ArticleProvider,
-              private shopping_provider: ShoppingProvider) {
+              private shopping_provider: ProcessProvider) {
 
   }
 
@@ -27,7 +27,7 @@ export class HomePage {
     this.articles_filtered = JSON.parse(JSON.stringify(this.articles));
   }
 
-  search_items(event) : void {
+  search_items(event): void {
     let item_name: string = event.target.value;
     item_name = item_name.toLowerCase();
 
@@ -41,7 +41,7 @@ export class HomePage {
     this.articles_filtered.splice(Article.index_of(this.articles_filtered, article), 1);
   }
 
-  remove_from_list(article: Article) : void {
+  remove_from_list(article: Article): void {
     const sort = (articles: Article[]) => {
       return articles.sort((a, b) => {
         if (a.nom < b.nom) return -1;
@@ -56,9 +56,10 @@ export class HomePage {
     this.articles_filtered = sort(this.articles_filtered);
   }
 
-  async start_shopping() : Promise<void> {
-    const shopping : Shopping = new Shopping(this.my_articles);
-    //const shopping_sorted : Shopping = await this.shopping_provider.post(shopping);
-    await this.navCtrl.push(ShoppingPage,{shopping:shopping});
+  async start_shopping(): Promise<void> {
+    const shopping: Shopping = new Shopping(this.my_articles);
+    const elem = await this.shopping_provider.post(shopping);
+    const shopping_sorted: Shopping = new Shopping(await this.shopping_provider.post(shopping));
+    await this.navCtrl.push(ShoppingPage, {shopping: shopping_sorted});
   }
 }

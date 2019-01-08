@@ -15,15 +15,12 @@
     <ion-grid>
       <ion-row>
         <ion-col class="text-align">
-          <button *ngIf="index > 0" (click)="set_precedent_article()" ion-button icon-start clear small>
-            Précédent
-          </button>
-        </ion-col>
-        <ion-col class="text-align">
-          <button *ngIf="index < shopping.get_articles().length - 1" (click)="set_next_article()" ion-button icon-end clear small>
+          <button *ngIf="index < shopping.get_articles().length - 1" (click)="set_next_article_alert()" ion-button icon-end
+                  clear small>
             Suivant
           </button>
-          <button *ngIf="index == shopping.get_articles().length - 1" (click)="finish_shopping()" ion-button icon-end clear small>
+          <button *ngIf="index == shopping.get_articles().length - 1" (click)="finish_shopping()" ion-button icon-end
+                  clear small>
             Terminer
           </button>
         </ion-col>
