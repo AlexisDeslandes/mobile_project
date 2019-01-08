@@ -16,10 +16,9 @@ export class DistancesProvider {
     console.log('Hello DistancesProvider Provider');
   }
 
-  async post(shopping: Distance[]): Promise<void> {
-    const promises: Promise<void>[] = [];
-    shopping.forEach(elem => promises.push(this.http.post<void>("https://renaudcosta.pythonanywhere.com/distances", elem).toPromise()));
-    await Promise.all(promises);
+  async post(distances: Distance[]): Promise<void> {
+    const request = {token: "wakandaforeva", distances: distances};
+    await this.http.post<void>("https://renaudcosta.pythonanywhere.com/distances", request).toPromise();
   }
 
 }
