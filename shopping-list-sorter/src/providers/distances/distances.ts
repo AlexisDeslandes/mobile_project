@@ -12,7 +12,7 @@ import {Distance} from "../../interfaces/Distance";
 export class DistancesProvider {
 
   constructor(public http: HttpClient) {
-    console.log('Hello DistancesProvider Provider');
+
   }
 
   async post(distances: Distance[]): Promise<void> {

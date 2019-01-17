@@ -20,7 +20,7 @@ export class ProcessProvider {
   async post(shopping: Shopping): Promise<Article[]> {
     const ids: number[] = shopping.get_articles().map(elem => elem.id);
     const request = {token: "wakandaforeva", articles: ids};
-    return await this.http.post<Article[]>("https://renaudcosta.pythonanywhere.com/processs", request).toPromise();
+    return await this.http.post<Article[]>("https://renaudcosta.pythonanywhere.com/process", request).toPromise();
   }
 
 }
