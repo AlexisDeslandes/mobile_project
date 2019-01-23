@@ -11,7 +11,7 @@
   <ion-grid>
     <ion-row>
       <ion-col col-12>
-        <ion-card>
+        <ion-card #maListe>
 
           <ion-item color="primary">
             <ion-icon item-left name="list"></ion-icon>
@@ -43,13 +43,17 @@
 
         <ion-card>
           <ion-searchbar
+            [(ngModel)]="search"
             color="primary"
             (ionInput)="search_items($event)"
             placeholder="Nom article"
+            (ionFocus)="make_my_list_disapear()"
+            (ionBlur)="make_my_list_appear()"
+            (ionClear)="resetSearch()"
           >
           </ion-searchbar>
-          <ion-list style="max-height: 30vh;overflow-y:scroll">
-            <ion-item  *ngFor="let article of articles_filtered" (click)="add_to_list(article)">
+          <ion-list style="height: 30vh;overflow-y:scroll" #searchResult>
+            <ion-item *ngFor="let article of articles_filtered" (touchstart)="add_to_list(article)">
               <ion-icon color="primary" item-left name="cart"></ion-icon>
               <ion-label>
                 {{article.nom}}

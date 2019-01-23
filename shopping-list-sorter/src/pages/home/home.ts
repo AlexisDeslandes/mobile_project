@@ -1,5 +1,5 @@
-import {Component} from '@angular/core';
-import {NavController} from 'ionic-angular';
+import {Component, ElementRef, ViewChild} from '@angular/core';
+import {Card, NavController} from 'ionic-angular';
 import {Article} from "../../interfaces/Article";
 import {ArticleProvider} from "../../providers/article/article";
 import {Shopping} from "../../interfaces/Shopping";
@@ -13,13 +13,16 @@ import {ShoppingPage} from "../shopping/shopping";
 })
 export class HomePage {
 
+  @ViewChild("maListe") myList : ElementRef;
+  @ViewChild("searchResult") searchResult : ElementRef;
+
   articles: Article[];
   my_articles: Article[] = [];
   articles_filtered: Article[];
+  search: string = "";
 
   constructor(public navCtrl: NavController, private article_provider: ArticleProvider,
               private shopping_provider: ProcessProvider) {
-
   }
 
   async ionViewDidLoad() {
@@ -39,6 +42,8 @@ export class HomePage {
     this.my_articles.push(article);
     this.articles.splice(Article.index_of(this.articles, article), 1);
     this.articles_filtered.splice(Article.index_of(this.articles_filtered, article), 1);
+    this.make_my_list_appear();
+    this.resetSearch();
   }
 
   remove_from_list(article: Article): void {
@@ -62,5 +67,20 @@ export class HomePage {
     articles_result = articles_result.filter(elem => elem.id !== 1);
     const shopping_sorted: Shopping = new Shopping(articles_result);
     await this.navCtrl.push(ShoppingPage, {shopping: shopping_sorted});
+  }
+
+  make_my_list_disapear() {
+    this.myList.nativeElement.style.display = "None";
+    this.searchResult.nativeElement.style.height = "50vh";
+  }
+
+  make_my_list_appear() {
+    this.myList.nativeElement.style.display = "block";
+    this.searchResult.nativeElement.style.height = "30vh";
+  }
+
+  resetSearch(){
+    this.search = "";
+    this.articles_filtered = JSON.parse(JSON.stringify(this.articles));
   }
 }
