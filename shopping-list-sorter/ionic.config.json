@@ -1,0 +1,7 @@
+{
+  "name": "shopping-list-sorter",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular"
+}
