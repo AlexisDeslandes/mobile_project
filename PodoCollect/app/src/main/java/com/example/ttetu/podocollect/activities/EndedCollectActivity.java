@@ -15,6 +15,12 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.example.ttetu.podocollect.R;
 import com.example.ttetu.podocollect.adapters.CoupleListAdapter;
@@ -86,18 +92,29 @@ public class EndedCollectActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onSuccess(JSONObject jsonObject) {
-                                        Log.d("D", "Status200");
                                         restartApp();
                                     }
 
                                     @Override
                                     public void onError(VolleyError error) {
-                                        Log.d("D", "ERROR No Internet Connexion");
                                         Context context = getApplicationContext();
-                                        CharSequence text = "No Internet Connexion !!!";
-                                        int duration = Toast.LENGTH_SHORT;
+                                        CharSequence message = null;
+                                        if (error instanceof NetworkError) {
+                                            message = "Cannot connect to Internet...Please check your connection!";
+                                        } else if (error instanceof ServerError) {
+                                            message = "The server could not be found. Please try again after some time!!";
+                                        } else if (error instanceof AuthFailureError) {
+                                            message = "Cannot connect to Internet...Please check your connection!";
+                                        } else if (error instanceof ParseError) {
+                                            message = "Parsing error! Please try again after some time!!";
+                                        } else if (error instanceof NoConnectionError) {
+                                            message = "Cannot connect to Internet...Please check your connection!";
+                                        } else if (error instanceof TimeoutError) {
+                                            message = "Connection TimeOut! Please check your internet connection.";
+                                        }
+                                        int duration = Toast.LENGTH_LONG;
 
-                                        Toast toast = Toast.makeText(context, text, duration);
+                                        Toast toast = Toast.makeText(context, message, duration);
                                         toast.show();
                                     }
                                 });
