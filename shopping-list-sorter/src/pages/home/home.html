@@ -8,19 +8,17 @@
 </ion-header>
 
 <ion-content>
-  <ion-grid>
-    <ion-row>
+  <ion-grid (click)="make_my_list_appear()" no-padding>
+    <ion-row class="flex-1" #maListe>
       <ion-col col-12>
-        <ion-card #maListe>
-
+        <ion-card>
           <ion-item color="primary">
             <ion-icon item-left name="list"></ion-icon>
             <ion-label>
               Ma liste
             </ion-label>
-            <button item-end ion-button clear color="light" (click)="start_shopping()">Lancer</button>
+            <img style="width: 30px;" item-end="" src="../../assets/imgs/verified.svg" (click)="start_shopping()"/>
           </ion-item>
-
 
           <ion-list style="height:30vh;overflow-y: scroll">
             <ion-item *ngFor="let article of my_articles">
@@ -33,12 +31,11 @@
               </button>
             </ion-item>
           </ion-list>
-
         </ion-card>
 
       </ion-col>
     </ion-row>
-    <ion-row>
+    <ion-row class="flex-1">
       <ion-col col-12>
 
         <ion-card>
@@ -48,12 +45,11 @@
             (ionInput)="search_items($event)"
             placeholder="Nom article"
             (ionFocus)="make_my_list_disapear()"
-            (ionBlur)="make_my_list_appear()"
             (ionClear)="resetSearch()"
           >
           </ion-searchbar>
           <ion-list style="height: 30vh;overflow-y:scroll" #searchResult>
-            <ion-item *ngFor="let article of articles_filtered" (touchstart)="add_to_list(article)">
+            <ion-item *ngFor="let article of articles_filtered" (click)="add_to_list(article)">
               <ion-icon color="primary" item-left name="cart"></ion-icon>
               <ion-label>
                 {{article.nom}}

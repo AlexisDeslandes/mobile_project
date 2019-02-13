@@ -2,6 +2,7 @@ import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Shopping} from "../../interfaces/Shopping";
 import {Article} from "../../interfaces/Article";
+import {ProcessAnswer} from "../../interfaces/ProcessAnswer";
 
 /*
   Generated class for the ProcessProvider provider.
@@ -17,10 +18,10 @@ export class ProcessProvider {
 
   }
 
-  async post(shopping: Shopping): Promise<Article[]> {
+  async post(shopping: Shopping): Promise<ProcessAnswer> {
     const ids: number[] = shopping.get_articles().map(elem => elem.id);
     const request = {token: "wakandaforeva", articles: ids};
-    return await this.http.post<Article[]>("https://renaudcosta.pythonanywhere.com/process", request).toPromise();
+    return await this.http.post<ProcessAnswer>("https://renaudcosta.pythonanywhere.com/process", request).toPromise();
   }
 
 }
