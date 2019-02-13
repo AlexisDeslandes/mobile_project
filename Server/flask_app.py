@@ -83,6 +83,7 @@ class Process(Resource):
                     "SELECT nom FROM articles WHERE id = " + str(article) + ";")
                 for row in cur.fetchall():
                     path_with_names.append({"id": article, "nom": row[0]})
+            path_with_names = {"distance":path.getSumDistance(), "articles":path_with_names}
             return path_with_names
 
 class Distances(Resource):
@@ -202,7 +203,7 @@ def genetic(articles, graph):
     # On fait evoluer notre population sur 100 generations
     ga=GA(gc)
     pop=ga.evoluerPopulation(pop)
-    for i in range(0, 50):
+    for i in range(0, 25):
         pop=ga.evoluerPopulation(pop)
 
     meilleurePopulation=pop.getFittest()
