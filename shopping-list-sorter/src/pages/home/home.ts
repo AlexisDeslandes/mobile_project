@@ -1,10 +1,11 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
-import {Card, NavController} from 'ionic-angular';
+import {Card, LoadingController, NavController} from 'ionic-angular';
 import {Article} from "../../interfaces/Article";
 import {ArticleProvider} from "../../providers/article/article";
 import {Shopping} from "../../interfaces/Shopping";
 import {ProcessProvider} from "../../providers/shopping/process";
 import {ShoppingPage} from "../shopping/shopping";
+import {ProcessAnswer} from "../../interfaces/ProcessAnswer";
 
 
 @Component({
@@ -13,8 +14,8 @@ import {ShoppingPage} from "../shopping/shopping";
 })
 export class HomePage {
 
-  @ViewChild("maListe") myList : ElementRef;
-  @ViewChild("searchResult") searchResult : ElementRef;
+  @ViewChild("maListe") myList: ElementRef;
+  @ViewChild("searchResult") searchResult: ElementRef;
 
   articles: Article[];
   my_articles: Article[] = [];
@@ -22,7 +23,7 @@ export class HomePage {
   search: string = "";
 
   constructor(public navCtrl: NavController, private article_provider: ArticleProvider,
-              private shopping_provider: ProcessProvider) {
+              private shopping_provider: ProcessProvider, private loadingCtrl: LoadingController) {
   }
 
   async ionViewDidLoad() {
@@ -32,14 +33,16 @@ export class HomePage {
 
   search_items(event): void {
     let item_name: string = event.target.value;
-    item_name = item_name.toLowerCase();
+    item_name = item_name.toLowerCase().replace('â', "a")
+      .replace('è', 'e');
 
     this.articles_filtered = this.articles
-      .filter(article => article.nom.toLowerCase().includes(item_name));
+      .filter(article => article.nom.toLowerCase().replace('â', "a")
+        .replace('è', 'e').includes(item_name));
   }
 
   add_to_list(article: Article): void {
-    this.my_articles.push(article);
+    this.my_articles.unshift(article);
     this.articles.splice(Article.index_of(this.articles, article), 1);
     this.articles_filtered.splice(Article.index_of(this.articles_filtered, article), 1);
     this.make_my_list_appear();
@@ -63,7 +66,11 @@ export class HomePage {
 
   async start_shopping(): Promise<void> {
     const shopping: Shopping = new Shopping(this.my_articles);
-    let articles_result: Article[] = await this.shopping_provider.post(shopping);
+    const loading = this.loadingCtrl.create({content: 'Calcul du chemin le plus court ...'});
+    await loading.present();
+    let processAnswer: ProcessAnswer = await this.shopping_provider.post(shopping);
+    let articles_result: Article[] = processAnswer.articles;
+    await loading.dismiss();
     articles_result = articles_result.filter(elem => elem.id !== 1);
     const shopping_sorted: Shopping = new Shopping(articles_result);
     await this.navCtrl.push(ShoppingPage, {shopping: shopping_sorted});
@@ -79,7 +86,7 @@ export class HomePage {
     this.searchResult.nativeElement.style.height = "30vh";
   }
 
-  resetSearch(){
+  resetSearch() {
     this.search = "";
     this.articles_filtered = JSON.parse(JSON.stringify(this.articles));
   }
