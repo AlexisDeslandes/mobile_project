@@ -92,25 +92,38 @@ class Process(Resource):
                     "SELECT nom FROM articles WHERE id = " + str(article) + ";")
                 for row in cur.fetchall():
                     path_with_names.append({"id": article, "nom": row[0]})
-            path_with_names = {"distance":path.getSumDistance(), "articles":path_with_names}
+            dist = path.getSumDistance()
+            path_with_names = {"distance":dist, "articles":path_with_names}
+
+            if pparent1 != None:
+                with open("/home/renaudcosta/trace_algo.txt", "a") as file:
+                    file.write("Crossover:\n")
+                    file.write("Parent 1: ")
+                pparent1.print_circuit()
+                with open("/home/renaudcosta/trace_algo.txt", "a") as file:
+                    file.write("Parent 2: ")
+                pparent2.print_circuit()
+                with open("/home/renaudcosta/trace_algo.txt", "a") as file:
+                    file.write("========> ")
+                penfant.print_circuit()
+
+            if ptournoi != None:
+                with open("/home/renaudcosta/trace_algo.txt", "a") as file:
+                    file.write("\n\n\nTournoi:\n")
+                ptournoi.print_population()
+                with open("/home/renaudcosta/trace_algo.txt", "a") as file:
+                    file.write("Gagnant:\n")
+                pwinner.print_circuit()
 
             with open("/home/renaudcosta/trace_algo.txt", "a") as file:
-                file.write("Crossover:\n")
-                file.write("Parent 1: ")
-            pparent1.print_circuit()
-            with open("/home/renaudcosta/trace_algo.txt", "a") as file:
-                file.write("Parent 2: ")
-            pparent2.print_circuit()
-            with open("/home/renaudcosta/trace_algo.txt", "a") as file:
-                file.write("========> ")
-            penfant.print_circuit()
-
-            with open("/home/renaudcosta/trace_algo.txt", "a") as file:
-                file.write("\n\n\nTournoi:\n")
-            ptournoi.print_population()
-            with open("/home/renaudcosta/trace_algo.txt", "a") as file:
-                file.write("Gagnant:\n")
-            pwinner.print_circuit()
+                file.write("\n\n\nCHEMIN FINAL:\n")
+                for articleId in range(len(path_with_names["articles"])):
+                    article = path_with_names["articles"][articleId]
+                    if articleId < len(path_with_names["articles"]) - 1:
+                        file.write(str(article["id"]) + " -> ")
+                    else:
+                        file.write(str(article["id"]))
+                file.write("      "+str(dist)+" pas au total")
 
             return path_with_names
 
