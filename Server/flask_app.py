@@ -15,6 +15,12 @@ api = Api(app)
 
 graph = []
 
+pparent1 = None
+pparent2 = None
+penfant = None
+ptournoi = None
+pwinner = None
+
 class DB:
   conn = None
 
@@ -61,6 +67,9 @@ class Process(Resource):
     def post(self):
         global allPaths
         global graph
+        global pparent1
+        global pparent2
+        global penfant
         graph = []
         db = DB()
         data = request.get_json()
@@ -84,6 +93,25 @@ class Process(Resource):
                 for row in cur.fetchall():
                     path_with_names.append({"id": article, "nom": row[0]})
             path_with_names = {"distance":path.getSumDistance(), "articles":path_with_names}
+
+            with open("/home/renaudcosta/trace_algo.txt", "a") as file:
+                file.write("Crossover:\n")
+                file.write("Parent 1: ")
+            pparent1.print_circuit()
+            with open("/home/renaudcosta/trace_algo.txt", "a") as file:
+                file.write("Parent 2: ")
+            pparent2.print_circuit()
+            with open("/home/renaudcosta/trace_algo.txt", "a") as file:
+                file.write("========> ")
+            penfant.print_circuit()
+
+            with open("/home/renaudcosta/trace_algo.txt", "a") as file:
+                file.write("\n\n\nTournoi:\n")
+            ptournoi.print_population()
+            with open("/home/renaudcosta/trace_algo.txt", "a") as file:
+                file.write("Gagnant:\n")
+            pwinner.print_circuit()
+
             return path_with_names
 
 class Distances(Resource):
@@ -197,14 +225,20 @@ def genetic(articles, graph):
 
     for article in articles:
         gc.ajouterArticle(article)
-    
+
+    with open("/home/renaudcosta/trace_algo.txt", "w") as file:
+        file.write("")
+
     pop=Population(gc, 50, True)
 
     # On fait evoluer notre population sur 100 generations
     ga=GA(gc)
     pop=ga.evoluerPopulation(pop)
     for i in range(0, 25):
-        pop=ga.evoluerPopulation(pop)
+        if i == 24:
+            pop=ga.evoluerPopulation(pop, True)
+        else:
+            pop=ga.evoluerPopulation(pop)
 
     meilleurePopulation=pop.getFittest()
 
@@ -251,6 +285,17 @@ class Circuit:
       else:
          for i in range(0, self.gestionnaireCircuit.nombreArticles()):
             self.circuit.append(None)
+
+   def print_circuit(self):
+        with open("/home/renaudcosta/trace_algo.txt", "a") as file:
+            for articleId in range(len(self.circuit)):
+                article = self.circuit[articleId]
+                if article != None:
+                    if articleId < len(self.circuit)-1:
+                        file.write(str(article)+" -> ")
+                    else:
+                        file.write(str(article))
+            file.write("      ("+str(self.getSumDistance())+" pas)\n")
 
    def __len__(self):
       return len(self.circuit)
@@ -316,7 +361,16 @@ class Population:
          for i in range(0, taillePopulation):
             nouveauCircuit = Circuit(gestionnaireCircuit, None)
             nouveauCircuit.genererIndividu()
+            nouveauCircuit.print_circuit()
             self.sauvegarderCircuit(i, nouveauCircuit)
+         with open("/home/renaudcosta/trace_algo.txt", "a") as file:
+            file.write("\n\n")
+
+   def print_population(self):
+       for circuit in self.circuits:
+           circuit.print_circuit()
+       with open("/home/renaudcosta/trace_algo.txt", "a") as file:
+           file.write("\n\n")
 
    def __setitem__(self, key, value):
       self.circuits[key] = value
@@ -335,7 +389,6 @@ class Population:
       for i in range(0, self.taillePopulation()):
          if fittest.getFitness() <= self.getCircuit(i).getFitness():
             fittest = self.getCircuit(i)
-      #print(*fittest)
       return fittest
 
    def taillePopulation(self):
@@ -348,8 +401,10 @@ class GA:
       self.tauxMutation = 0.015
       self.tailleTournoi = 5
       self.elitisme = True
+      self.print_cro = True
+      self.print_tou = True
 
-   def evoluerPopulation(self, pop):
+   def evoluerPopulation(self, pop, print_pop=False):
       nouvellePopulation = Population(
           self.gestionnaireCircuit, pop.taillePopulation(), False)
       elitismeOffset = 0
@@ -360,15 +415,23 @@ class GA:
       for i in range(elitismeOffset, nouvellePopulation.taillePopulation()):
          parent1 = self.selectionTournoi(pop)
          parent2 = self.selectionTournoi(pop)
-         enfant = self.crossover(parent1, parent2)
+         enfant = self.crossover(parent1, parent2, self.print_cro)
          nouvellePopulation.sauvegarderCircuit(i, enfant)
+         self.print_cro = False
 
       for i in range(elitismeOffset, nouvellePopulation.taillePopulation()):
          self.muter(nouvellePopulation.getCircuit(i))
 
+      if print_pop:
+          nouvellePopulation.print_population()
+
       return nouvellePopulation
 
-   def crossover(self, parent1, parent2):
+   def crossover(self, parent1, parent2, print_cro=False):
+      global pparent1
+      global pparent2
+      global penfant
+
       enfant = Circuit(self.gestionnaireCircuit)
 
       startPos = int(random.random() * parent1.tailleCircuit())
@@ -388,6 +451,11 @@ class GA:
                   enfant.setArticle(ii, parent2.getArticle(i))
                   break
 
+      if print_cro:
+        pparent1 = parent1
+        pparent2 = parent2
+        penfant = enfant
+
       return enfant
 
    def muter(self, circuit):
@@ -402,11 +470,24 @@ class GA:
            circuit.setArticle(circuitPos1, article2)
 
    def selectionTournoi(self, pop):
+     global ptournoi
+     global pwinner
      tournoi = Population(self.gestionnaireCircuit, self.tailleTournoi, False)
      for i in range(0, self.tailleTournoi):
         randomId = int(random.random() * pop.taillePopulation())
         tournoi.sauvegarderCircuit(i, pop.getCircuit(randomId))
      fittest = tournoi.getFittest()
+
+     startWithOne = True
+     for c in tournoi.circuits:
+         if c.circuit[0] != 1:
+             startWithOne = False
+     if startWithOne:
+         if self.print_tou:
+                ptournoi = tournoi
+                pwinner = fittest
+                self.print_tou = False
+
      return fittest
 
 api.add_resource(HelloWorld, '/')  # GET
