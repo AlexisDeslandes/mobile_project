@@ -85,6 +85,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             articlesString.put("endId", articleList.get(articleIndex).getName());
                             articlesString.put("distance", stepCounter);
                             stringJsonArray.put(articlesString);
+                        }else{
+                            articlesSteps.put("startId", 1);
+                            articlesSteps.put("endId", articleList.get(articleIndex).getId());
+                            articlesSteps.put("distance", stepCounter);
+                            stepJsonArray.put(articlesSteps);
+                            articlesString.put("startId", "Entrée");
+                            articlesString.put("endId", articleList.get(articleIndex).getName());
+                            articlesString.put("distance", stepCounter);
+                            stringJsonArray.put(articlesString);
                         }
 
                     } catch (JSONException e) {
